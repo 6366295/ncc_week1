@@ -263,8 +263,8 @@ public class MainActivity extends ServiceActivity {
         ownAddressText.setText(ownAddress);
         deviceCountText.setText(connected);
         devicesButton.setEnabled(devicesButtonEnabled);
-        pingMasterButton.setEnabled(allowPingMaster);
-        pingSlavesButton.setEnabled(allowPingSlaves);
+        //pingMasterButton.setEnabled(allowPingMaster);
+        //pingSlavesButton.setEnabled(allowPingSlaves);
     }
 
     private void refreshMbedControls() {
