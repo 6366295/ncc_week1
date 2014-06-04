@@ -351,7 +351,7 @@ public class MainActivity extends ServiceActivity {
                         if (values == null || values.length != 1) {
                             toastShort("Error!");
                         } else {
-                            toastShort("Moving to chosen position: " + String.valueOf(values[0]));
+                            toastShort("Moved to chosen position: " + String.valueOf(values[0]));
                         }
                     } else if (response.getCommandId() == COMMAND_GET) {
                         if (values == null || values.length != 1) {
