@@ -179,10 +179,22 @@ public class MainActivity extends ServiceActivity {
         mbedGetPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                float[] args = new float[1];
-                args[0] = 0.0f;
-                toastShort("Get position\n");
-                getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
+                BluetoothService bluetooth = getBluetooth();
+                if (bluetooth != null) {
+                    if (bluetooth.master.countConnected() > 0) {
+                        bluetooth.master.sendToAll(20);
+                    } else {
+                        float[] args = new float[1];
+                        args[0] = 0.0f;
+                        toastShort("Get position\n");
+                        getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
+                    }
+                } else {
+                    float[] args = new float[1];
+                    args[0] = 0.0f;
+                    toastShort("Get position\n");
+                    getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
+                }
             }
 
         });
@@ -341,6 +353,9 @@ public class MainActivity extends ServiceActivity {
                 // Slave received data from master.
                 Serializable obj = intent.getSerializableExtra(SlaveManager.EXTRA_OBJECT);
                 if (obj != null) {
+                    if (Integer.valueOf(String.valueOf(obj)) == 20) {
+                        toastShort("GetPosition.");
+                    }
                     toastShort("From master:\n" + String.valueOf(obj));
                     float[] args = new float[1];
 
