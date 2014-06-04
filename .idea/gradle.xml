@@ -7,9 +7,9 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\Patrick\Documents\GitHub\ncc_week1" />
-            <option value="C:\Users\Patrick\Documents\GitHub\ncc_week1\app" />
-            <option value="C:\Users\Patrick\Documents\GitHub\ncc_week1\lib" />
+            <option value="F:\ncc_week1" />
+            <option value="F:\ncc_week1\app" />
+            <option value="F:\ncc_week1\lib" />
           </set>
         </option>
       </GradleProjectSettings>
