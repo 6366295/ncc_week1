@@ -354,7 +354,10 @@ public class MainActivity extends ServiceActivity {
                 Serializable obj = intent.getSerializableExtra(SlaveManager.EXTRA_OBJECT);
                 if (obj != null) {
                     if (Float.valueOf(String.valueOf(obj)) == 20.0f) {
-                        toastShort("GetPosition.");
+                        float[] args = new float[1];
+                        args[0] = 0.0f;
+                        toastShort("Get position\n");
+                        getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                     } else {
                         toastShort("From master:\n" + String.valueOf(obj));
                         float[] args = new float[1];
@@ -376,6 +379,8 @@ public class MainActivity extends ServiceActivity {
                         slaveConnected = true;
                     }
                     */
+                    TextView mbedReceivedPosition = (TextView)findViewById(R.id.current_position);
+                    mbedReceivedPosition.setText(Float.toString(Float.valueOf(String.valueOf(obj))));
                     toastShort("From " + device + "\n" + String.valueOf(obj));
                 } else {
                     toastShort("From " + device + "\nnull!");
@@ -403,6 +408,12 @@ public class MainActivity extends ServiceActivity {
                         if (values == null || values.length != 1) {
                             toastShort("Error!");
                         } else {
+                            final BluetoothService bluetooth = getBluetooth();
+                            if(bluetooth != null) {
+                                if (bluetooth.slave.isConnected()) {
+                                    bluetooth.slave.sendToMaster(values[0]);
+                                }
+                            }
                             TextView mbedReceivedPosition = (TextView)findViewById(R.id.current_position);
                             mbedReceivedPosition.setText(Float.toString(values[0]));
                         }
