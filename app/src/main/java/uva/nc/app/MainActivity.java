@@ -355,12 +355,13 @@ public class MainActivity extends ServiceActivity {
                 if (obj != null) {
                     if (Integer.valueOf(String.valueOf(obj)) == 20) {
                         toastShort("GetPosition.");
-                    }
-                    toastShort("From master:\n" + String.valueOf(obj));
-                    float[] args = new float[1];
+                    } else {
+                        toastShort("From master:\n" + String.valueOf(obj));
+                        float[] args = new float[1];
 
-                    args[0] = Float.valueOf(String.valueOf(obj));
-                    getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
+                        args[0] = Float.valueOf(String.valueOf(obj));
+                        getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
+                    }
                 } else {
                     toastShort("From master:\nnull");
                 }
