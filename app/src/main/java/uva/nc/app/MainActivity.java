@@ -353,7 +353,7 @@ public class MainActivity extends ServiceActivity {
                 // Slave received data from master.
                 Serializable obj = intent.getSerializableExtra(SlaveManager.EXTRA_OBJECT);
                 if (obj != null) {
-                    if (Integer.valueOf(String.valueOf(obj)) == 20) {
+                    if (Float.valueOf(String.valueOf(obj)) == 20.0f) {
                         toastShort("GetPosition.");
                     } else {
                         toastShort("From master:\n" + String.valueOf(obj));
