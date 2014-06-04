@@ -247,13 +247,6 @@ public class MainActivity extends ServiceActivity {
         String connText = getString(R.string.not_connected); // if you want to localize
         boolean enableButtons = false;
 
-        final BluetoothService bluetooth = getBluetooth();
-        if(bluetooth != null) {
-            if(bluetooth.master.countConnected() > 0) {
-                enableButtons = true;
-            }
-        }
-
         MbedService mbed = getMbed();
         if (mbed != null && mbed.manager.areChannelsOpen()) {
             connText = getString(R.string.connected);
