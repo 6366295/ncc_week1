@@ -1,7 +1,8 @@
+<pre>
 .gradle
 /local.properties
-/.idea/
-/lib/lib.iml
-ncc_week1.iml
-app/app.iml
+/.idea/*.xml
+*.iml
 .DS_Store
+.DS_Store?
+</pre>
