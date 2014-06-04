@@ -342,6 +342,10 @@ public class MainActivity extends ServiceActivity {
                 Serializable obj = intent.getSerializableExtra(SlaveManager.EXTRA_OBJECT);
                 if (obj != null) {
                     toastShort("From master:\n" + String.valueOf(obj));
+                    float[] args = new float[1];
+
+                    args[0] = Float.valueOf(String.valueOf(obj));
+                    getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
                 } else {
                     toastShort("From master:\nnull");
                 }
