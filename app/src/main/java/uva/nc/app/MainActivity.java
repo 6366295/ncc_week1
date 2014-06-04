@@ -250,6 +250,7 @@ public class MainActivity extends ServiceActivity {
         final BluetoothService bluetooth = getBluetooth();
         if(bluetooth != null) {
             if(bluetooth.master.countConnected() > 0) {
+                connText = "Connected to slave Mbed";
                 enableButtons = true;
             }
         }
