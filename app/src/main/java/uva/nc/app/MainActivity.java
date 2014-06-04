@@ -263,6 +263,7 @@ public class MainActivity extends ServiceActivity {
         ownAddressText.setText(ownAddress);
         deviceCountText.setText(connected);
         devicesButton.setEnabled(devicesButtonEnabled);
+        /* We commented these lines to prevent the ping buttons from being enabled, which effectively disables the ability to send ping messages. */
         //pingMasterButton.setEnabled(allowPingMaster);
         //pingSlavesButton.setEnabled(allowPingSlaves);
     }
@@ -282,7 +283,7 @@ public class MainActivity extends ServiceActivity {
         MbedService mbed = getMbed();
         if (mbed != null && mbed.manager.areChannelsOpen()) {
             connText = getString(R.string.connected);
-            bluetooth.slave.sendToMaster(1);
+            //bluetooth.slave.sendToMaster(1);
             enableButtons = true;
         }
 
