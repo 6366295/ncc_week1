@@ -1,4 +1,4 @@
-<pre>
+
 .gradle
 /local.properties
 /.idea/*.xml
@@ -6,4 +6,3 @@
 .DS_Store
 .DS_Store?
 build/
-</pre>
