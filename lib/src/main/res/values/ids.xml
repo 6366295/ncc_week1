@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="template_device_name" type="id" />
+    <item name="template_device_address" type="id" />
+    <item name="template_device_button" type="id" />
+</resources>
