@@ -54,6 +54,7 @@ public class MainActivity extends ServiceActivity {
 
     // Random data for sample events.
     private Random random = new Random();
+    private boolean slaveConnected = false;
 
     // Accessory to connect to when service is connected.
     private UsbAccessory toConnect;
@@ -249,7 +250,7 @@ public class MainActivity extends ServiceActivity {
 
         final BluetoothService bluetooth = getBluetooth();
         if(bluetooth != null) {
-            if(bluetooth.master.countConnected() > 0) {
+            if(bluetooth.master.countConnected() > 0 && slaveConnected) {
                 enableButtons = true;
             }
         }
@@ -257,6 +258,8 @@ public class MainActivity extends ServiceActivity {
         MbedService mbed = getMbed();
         if (mbed != null && mbed.manager.areChannelsOpen()) {
             connText = getString(R.string.connected);
+            bluetooth.slave.sendToMaster(1);
+            slaveConnected = true;
             enableButtons = true;
         }
 
@@ -337,6 +340,9 @@ public class MainActivity extends ServiceActivity {
                 Serializable obj = intent.getSerializableExtra(MasterManager.EXTRA_OBJECT);
                 BluetoothDevice device = intent.getParcelableExtra(MasterManager.EXTRA_DEVICE);
                 if (obj != null) {
+                    if (Integer.valueOf(String.valueOf(obj)) == 1) {
+                        slaveConnected = true;
+                    }
                     toastShort("From " + device + "\n" + String.valueOf(obj));
                 } else {
                     toastShort("From " + device + "\nnull!");
