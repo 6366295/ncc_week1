@@ -158,9 +158,16 @@ public class MainActivity extends ServiceActivity {
                 if(args[0] > 10.0f)
                     args[0] = 10.0f;
 
-                toastShort("Sent position\n");
-                mbedPositionText.setText("");
-                getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
+                if(slaveConnected) {
+                    BluetoothService bluetooth = getBluetooth();
+                    if (bluetooth != null) {
+                        bluetooth.master.sendToAll(args[0]);
+                    }
+                } else {
+                    toastShort("Sent position\n");
+                    mbedPositionText.setText("");
+                    getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
+                }
             }
 
         });
@@ -251,6 +258,7 @@ public class MainActivity extends ServiceActivity {
         final BluetoothService bluetooth = getBluetooth();
         if(bluetooth != null) {
             if(bluetooth.master.countConnected() > 0 && slaveConnected) {
+                connText = "Connected to slave Servos";
                 enableButtons = true;
             }
         }
