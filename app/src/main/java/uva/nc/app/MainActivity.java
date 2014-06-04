@@ -54,7 +54,7 @@ public class MainActivity extends ServiceActivity {
 
     // Random data for sample events.
     private Random random = new Random();
-    private boolean slaveConnected = false;
+    //private boolean slaveConnected = false;
 
     // Accessory to connect to when service is connected.
     private UsbAccessory toConnect;
@@ -158,10 +158,14 @@ public class MainActivity extends ServiceActivity {
                 if(args[0] > 10.0f)
                     args[0] = 10.0f;
 
-                if(slaveConnected) {
-                    BluetoothService bluetooth = getBluetooth();
-                    if (bluetooth != null) {
+                BluetoothService bluetooth = getBluetooth();
+                if (bluetooth != null) {
+                    if (bluetooth.master.countConnected() > 0) {
                         bluetooth.master.sendToAll(args[0]);
+                    } else {
+                        toastShort("Sent position\n");
+                        mbedPositionText.setText("");
+                        getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
                     }
                 } else {
                     toastShort("Sent position\n");
@@ -257,7 +261,7 @@ public class MainActivity extends ServiceActivity {
 
         final BluetoothService bluetooth = getBluetooth();
         if(bluetooth != null) {
-            if(bluetooth.master.countConnected() > 0 && slaveConnected) {
+            if(bluetooth.master.countConnected() > 0) {
                 connText = "Connected to slave Servos";
                 enableButtons = true;
             }
@@ -267,7 +271,6 @@ public class MainActivity extends ServiceActivity {
         if (mbed != null && mbed.manager.areChannelsOpen()) {
             connText = getString(R.string.connected);
             bluetooth.slave.sendToMaster(1);
-            slaveConnected = true;
             enableButtons = true;
         }
 
@@ -348,9 +351,11 @@ public class MainActivity extends ServiceActivity {
                 Serializable obj = intent.getSerializableExtra(MasterManager.EXTRA_OBJECT);
                 BluetoothDevice device = intent.getParcelableExtra(MasterManager.EXTRA_DEVICE);
                 if (obj != null) {
+                    /*
                     if (Integer.valueOf(String.valueOf(obj)) == 1) {
                         slaveConnected = true;
                     }
+                    */
                     toastShort("From " + device + "\n" + String.valueOf(obj));
                 } else {
                     toastShort("From " + device + "\nnull!");
