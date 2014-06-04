@@ -345,7 +345,6 @@ public class MainActivity extends ServiceActivity {
                         return;
                     }
 
-
                     float[] values = response.getValues();
 
                     if (response.getCommandId() == COMMAND_SEND) {
