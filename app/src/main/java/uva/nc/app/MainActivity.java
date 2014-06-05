@@ -14,8 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.Serializable;
-//import java.util.Arrays;
-import java.util.Random;
 
 import uva.nc.ServiceActivity;
 import uva.nc.bluetooth.BluetoothService;
@@ -38,23 +36,20 @@ public class MainActivity extends ServiceActivity {
     private static final int COMMAND_SEND = 1;
     private static final int COMMAND_GET = 2;
 
+    // ID's for commands on Bluetooth
+    private static final float SLAVE_GET = 20.0f;
+
     // BT Controls.
     private TextView listenerStatusText;
     private TextView ownAddressText;
     private TextView deviceCountText;
     private Button listenerButton;
     private Button devicesButton;
-    private Button pingMasterButton;
-    private Button pingSlavesButton;
 
     // mBed controls.
     private TextView mbedConnectedText;
     private Button mbedSendPosition;
     private Button mbedGetPosition;
-
-    // Random data for sample events.
-    private Random random = new Random();
-    //private boolean slaveConnected = false;
 
     // Accessory to connect to when service is connected.
     private UsbAccessory toConnect;
@@ -118,26 +113,6 @@ public class MainActivity extends ServiceActivity {
             }
         });
         mbedConnectedText = (TextView)findViewById(R.id.mbed_connected);
-        pingMasterButton = (Button)findViewById(R.id.ping_master);
-        pingMasterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BluetoothService bluetooth = getBluetooth();
-                if (bluetooth != null) {
-                    bluetooth.slave.sendToMaster(random.nextInt(2500));
-                }
-            }
-        });
-        pingSlavesButton = (Button)findViewById(R.id.ping_slaves);
-        pingSlavesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BluetoothService bluetooth = getBluetooth();
-                if (bluetooth != null) {
-                    bluetooth.master.sendToAll(random.nextInt(10000) + 5000);
-                }
-            }
-        });
 
         // mBed controls.
         mbedSendPosition = (Button)findViewById(R.id.send_position);
@@ -146,30 +121,37 @@ public class MainActivity extends ServiceActivity {
             public void onClick(View view) {
                 EditText mbedPositionText = (EditText)findViewById(R.id.position);
 
+                String temp = mbedPositionText.getText().toString();
                 float[] args = new float[1];
 
-                String temp = mbedPositionText.getText().toString();
+                // Check if input is empty
                 if(temp.matches("")) {
                     args[0] = 0.0f;
                 } else {
                     args[0] = Float.valueOf(mbedPositionText.getText().toString());
                 }
 
+                // Limit input position to 10
                 if(args[0] > 10.0f)
                     args[0] = 10.0f;
 
+                // Do this if bluetooth is on
                 BluetoothService bluetooth = getBluetooth();
                 if (bluetooth != null) {
+                    // If master send position to all connected slaves
                     if (bluetooth.master.countConnected() > 0) {
                         bluetooth.master.sendToAll(args[0]);
+                    // Else do the same thing as when bluetooth is off
                     } else {
                         toastShort("Sent position\n");
                         mbedPositionText.setText("");
+
                         getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
                     }
                 } else {
                     toastShort("Sent position\n");
                     mbedPositionText.setText("");
+
                     getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
                 }
             }
@@ -179,20 +161,27 @@ public class MainActivity extends ServiceActivity {
         mbedGetPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Do this if bluetooth is on
                 BluetoothService bluetooth = getBluetooth();
                 if (bluetooth != null) {
+                    // If master send position to all connected slaves
                     if (bluetooth.master.countConnected() > 0) {
                         bluetooth.master.sendToAll(20);
+                    // Else do the same thing as when bluetooth is off
                     } else {
                         float[] args = new float[1];
                         args[0] = 0.0f;
+
                         toastShort("Get position\n");
+
                         getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                     }
                 } else {
                     float[] args = new float[1];
                     args[0] = 0.0f;
+
                     toastShort("Get position\n");
+
                     getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                 }
             }
@@ -263,19 +252,17 @@ public class MainActivity extends ServiceActivity {
         ownAddressText.setText(ownAddress);
         deviceCountText.setText(connected);
         devicesButton.setEnabled(devicesButtonEnabled);
-        /* We commented these lines to prevent the ping buttons from being enabled, which effectively disables the ability to send ping messages. */
-        //pingMasterButton.setEnabled(allowPingMaster);
-        //pingSlavesButton.setEnabled(allowPingSlaves);
     }
 
     private void refreshMbedControls() {
         String connText = getString(R.string.not_connected); // if you want to localize
         boolean enableButtons = false;
 
+        // Enable mBed controls when master node is connected to at least one slave node
         final BluetoothService bluetooth = getBluetooth();
         if(bluetooth != null) {
             if(bluetooth.master.countConnected() > 0) {
-                connText = "Connected to slave Servos";
+                connText = "Connected to slave apps";
                 enableButtons = true;
             }
         }
@@ -283,7 +270,6 @@ public class MainActivity extends ServiceActivity {
         MbedService mbed = getMbed();
         if (mbed != null && mbed.manager.areChannelsOpen()) {
             connText = getString(R.string.connected);
-            //bluetooth.slave.sendToMaster(1);
             enableButtons = true;
         }
 
@@ -354,13 +340,16 @@ public class MainActivity extends ServiceActivity {
                 // Slave received data from master.
                 Serializable obj = intent.getSerializableExtra(SlaveManager.EXTRA_OBJECT);
                 if (obj != null) {
-                    if (Float.valueOf(String.valueOf(obj)) == 20.0f) {
+                    // If slave receive get position from slave command from master
+                    if (Float.valueOf(String.valueOf(obj)) == SLAVE_GET) {
                         float[] args = new float[1];
                         args[0] = 0.0f;
+
                         toastShort("Get position\n");
+
                         getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                     } else {
-                        toastShort("From master:\n" + String.valueOf(obj));
+                        toastShort("Requested position from master:\n" + String.valueOf(obj));
                         float[] args = new float[1];
 
                         args[0] = Float.valueOf(String.valueOf(obj));
@@ -375,14 +364,7 @@ public class MainActivity extends ServiceActivity {
                 Serializable obj = intent.getSerializableExtra(MasterManager.EXTRA_OBJECT);
                 BluetoothDevice device = intent.getParcelableExtra(MasterManager.EXTRA_DEVICE);
                 if (obj != null) {
-                    /*
-                    if (Integer.valueOf(String.valueOf(obj)) == 1) {
-                        slaveConnected = true;
-                    }
-                    */
-                    TextView mbedReceivedPosition = (TextView)findViewById(R.id.current_position);
-                    mbedReceivedPosition.setText(Float.toString(Float.valueOf(String.valueOf(obj))));
-                    toastShort("From " + device + "\n" + String.valueOf(obj));
+                    toastShort("Current position from " + device + ":\n" + String.valueOf(obj));
                 } else {
                     toastShort("From " + device + "\nnull!");
                 }
@@ -403,20 +385,23 @@ public class MainActivity extends ServiceActivity {
                         if (values == null || values.length != 1) {
                             toastShort("Error!");
                         } else {
-                            toastShort("Moved to chosen position: " + String.valueOf(values[0]));
+                            toastShort("Moved to chosen position:\n" + String.valueOf(values[0]));
                         }
                     } else if (response.getCommandId() == COMMAND_GET) {
                         if (values == null || values.length != 1) {
                             toastShort("Error!");
                         } else {
+                            // If slave is connected to master
                             final BluetoothService bluetooth = getBluetooth();
                             if(bluetooth != null) {
                                 if (bluetooth.slave.isConnected()) {
                                     bluetooth.slave.sendToMaster(values[0]);
+                                } else {
+                                    toastShort("Current position of Servo system:\n" + String.valueOf(values[0]));
                                 }
+                            } else {
+                                toastShort("Current position of Servo system:\n" + String.valueOf(values[0]));
                             }
-                            TextView mbedReceivedPosition = (TextView)findViewById(R.id.current_position);
-                            mbedReceivedPosition.setText(Float.toString(values[0]));
                         }
                     }
                 }

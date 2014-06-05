@@ -73,14 +73,6 @@
                     android:id="@+id/get_position"
                     android:enabled="false" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="0"
-                    android:id="@+id/current_position"
-                    android:layout_weight="1" />
-
             </LinearLayout>
 
             <TextView
@@ -131,13 +123,6 @@
                     android:enabled="false"
                     android:layout_weight="1" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ping all"
-                    android:id="@+id/ping_slaves"
-                    android:enabled="false"
-                    android:layout_weight="1" />
             </LinearLayout>
 
             <TextView
@@ -188,19 +173,12 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/listener"
+                    android:id="@+id/lisener"
                     android:layout_below="@+id/listener_status"
                     android:text="@string/start_listening"
                     android:enabled="false"
                     android:layout_weight="1" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ping master"
-                    android:id="@+id/ping_master"
-                    android:enabled="false"
-                    android:layout_weight="1" />
             </LinearLayout>
 
         </LinearLayout>
