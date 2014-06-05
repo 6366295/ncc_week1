@@ -140,18 +140,19 @@ public class MainActivity extends ServiceActivity {
                 if (bluetooth != null) {
                     // If master send position to all connected slaves
                     if (bluetooth.master.countConnected() > 0) {
+                        toastShort("Sent position to slaves");
                         mbedPositionText.setText("");
 
                         bluetooth.master.sendToAll(args[0]);
                     // Else do the same thing as when bluetooth is off
                     } else {
-                        toastShort("Sent position\n");
+                        //toastShort("Sent position\n");
                         mbedPositionText.setText("");
 
                         getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
                     }
                 } else {
-                    toastShort("Sent position\n");
+                    //toastShort("Sent position\n");
                     mbedPositionText.setText("");
 
                     getMbed().manager.write(new MbedRequest(COMMAND_SEND, args));
@@ -174,7 +175,7 @@ public class MainActivity extends ServiceActivity {
                         float[] args = new float[1];
                         args[0] = 0.0f;
 
-                        toastShort("Get position");
+                        //toastShort("Get position");
 
                         getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                     }
@@ -182,7 +183,7 @@ public class MainActivity extends ServiceActivity {
                     float[] args = new float[1];
                     args[0] = 0.0f;
 
-                    toastShort("Get position");
+                    //toastShort("Get position");
 
                     getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                 }
@@ -343,7 +344,7 @@ public class MainActivity extends ServiceActivity {
                         float[] args = new float[1];
                         args[0] = 0.0f;
 
-                        toastShort("Get position\n");
+                        //toastShort("Get position");
 
                         getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                     } else {
