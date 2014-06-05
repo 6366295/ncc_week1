@@ -29,7 +29,7 @@ public class MainActivity extends ServiceActivity {
 
     private static final String TAG = MainActivity.class.getName();
 
-    // Receiver implemented in separate class, see bottom of file.
+    // Receiver implemented in separate class, see bottom of file. 
     private final MainActivityReceiver receiver = new MainActivityReceiver();
 
     // ID's for commands on mBed.
