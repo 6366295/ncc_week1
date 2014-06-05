@@ -196,8 +196,6 @@ public class MainActivity extends ServiceActivity {
         String connected = "0";
         boolean slaveButtonEnabled = false;
         boolean devicesButtonEnabled = false;
-        boolean allowPingMaster = false;
-        boolean allowPingSlaves = false;
 
         // Well it's not pretty, but it (barely) avoids duplicate logic.
         final BluetoothService bluetooth = getBluetooth();
@@ -209,13 +207,11 @@ public class MainActivity extends ServiceActivity {
             int devConnected = bluetooth.master.countConnected();
             if (bluetooth.master.countConnected() > 0) {
                 connected = String.valueOf(devConnected);
-                allowPingSlaves = true;
             }
 
             if (bluetooth.slave.isConnected()) {
                 slaveStatus = "Connected to " + bluetooth.slave.getRemoteDevice();
                 slaveButton = "Disconnect";
-                allowPingMaster = true;
                 listenerButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

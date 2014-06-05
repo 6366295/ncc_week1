@@ -173,7 +173,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lisener"
+                    android:id="@+id/listener"
                     android:layout_below="@+id/listener_status"
                     android:text="@string/start_listening"
                     android:enabled="false"
