@@ -140,6 +140,8 @@ public class MainActivity extends ServiceActivity {
                 if (bluetooth != null) {
                     // If master send position to all connected slaves
                     if (bluetooth.master.countConnected() > 0) {
+                        mbedPositionText.setText("");
+
                         bluetooth.master.sendToAll(args[0]);
                     // Else do the same thing as when bluetooth is off
                     } else {
@@ -172,7 +174,7 @@ public class MainActivity extends ServiceActivity {
                         float[] args = new float[1];
                         args[0] = 0.0f;
 
-                        toastShort("Get position\n");
+                        toastShort("Get position");
 
                         getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                     }
@@ -180,7 +182,7 @@ public class MainActivity extends ServiceActivity {
                     float[] args = new float[1];
                     args[0] = 0.0f;
 
-                    toastShort("Get position\n");
+                    toastShort("Get position");
 
                     getMbed().manager.write(new MbedRequest(COMMAND_GET, args));
                 }
@@ -392,12 +394,9 @@ public class MainActivity extends ServiceActivity {
                             if(bluetooth != null) {
                                 if (bluetooth.slave.isConnected()) {
                                     bluetooth.slave.sendToMaster(values[0]);
-                                } else {
-                                    toastShort("Current position of Servo system:\n" + String.valueOf(values[0]));
                                 }
-                            } else {
-                                toastShort("Current position of Servo system:\n" + String.valueOf(values[0]));
                             }
+                            toastShort("Current position of Servo system:\n" + String.valueOf(values[0]));
                         }
                     }
                 }
