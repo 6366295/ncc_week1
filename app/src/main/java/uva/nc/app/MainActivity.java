@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import uva.nc.ServiceActivity;
 import uva.nc.bluetooth.BluetoothService;
@@ -278,9 +279,11 @@ public class MainActivity extends ServiceActivity {
     }
 
 
-
     // Broadcast receiver which handles incoming events. If it were smaller, inline it.
     private class MainActivityReceiver extends BroadcastReceiver {
+        String currentLocation = "[0, 0]";
+        String direction = "None";
+        String confirmation = "False";
 
         // Refresh BT controls on these events.
         private final String BLUETOOTH_REFRESH_ON[] = { MasterManager.DEVICE_ADDED,
@@ -363,7 +366,37 @@ public class MainActivity extends ServiceActivity {
                 Serializable obj = intent.getSerializableExtra(MasterManager.EXTRA_OBJECT);
                 BluetoothDevice device = intent.getParcelableExtra(MasterManager.EXTRA_DEVICE);
                 if (obj != null) {
-                    toastShort("Current position from " + device + ":\n" + String.valueOf(obj));
+                    String Input = String.valueOf(obj);
+
+
+                    if (Input.contains("QRdata: ")) {
+                        String QRdata = Input.replace("QRdata: ", "");
+                        toastShort("From slave " + device + ":\n" + QRdata);
+                        currentLocation = QRdata.replace("Locatie ", "").replace("; Robot-ID: 21;", "");
+                        final BluetoothService bluetooth = getBluetooth();
+                        if (bluetooth != null) {
+                            if (bluetooth.master.countConnected() > 0) {
+                                toastShort("To " + device + "\n:" + currentLocation);
+                                bluetooth.master.sendToDevice(device, "currentLocation: " + currentLocation);
+                            }
+                        }
+                    } else if (Input.contains("direction: ")) {
+                        direction = Input.replace("direction: ", "");
+                        toastShort("direction: " + direction);
+                        confirmation = Confirm(currentLocation, direction);
+                        final BluetoothService bluetooth = getBluetooth();
+                        if (bluetooth != null) {
+                            if (bluetooth.master.countConnected() > 0) {
+                                if(confirmation.equals("True")) {
+                                    toastShort("To " + device + ":\n" + confirmation);
+                                    bluetooth.master.sendToDevice(device, "confirmation: " + confirmation);
+                                } else if (confirmation.equals("False")) {
+                                    toastShort("To " + device + ":\n" + currentLocation);
+                                    bluetooth.master.sendToDevice(device, "currentLocation: " + currentLocation);
+                                }
+                            }
+                        }
+                    }
                 } else {
                     toastShort("From " + device + "\nnull!");
                 }
@@ -402,6 +435,30 @@ public class MainActivity extends ServiceActivity {
                     }
                 }
             }
+        }
+
+        String[] ReservedLocations = {"[0, 1]", "[1, 0]", "[2, 1]"};
+        //ReservedLocations[3] = "[1, 2]";
+
+        public String Confirm(String currentLocation, String direction) {
+            /* Also needs a global array with all the reserved locations.
+             * Currently named: 'ReservedLocations' */
+            // Initialize 'newPosition' based on parameters.
+            String newPosition = "";
+            int currentX = Integer.valueOf(String.valueOf(currentLocation.charAt(1)));
+            int currentY = Integer.valueOf(String.valueOf(currentLocation.charAt(4)));
+            if (direction.equals("North"))
+                newPosition = "[" + currentX + ", " + (currentY + 1) + "]";
+            else if (direction.equals("East"))
+                newPosition = "[" + (currentX + 1) + ", " + currentY + "]";
+            else if (direction.equals("South"))
+                newPosition = "[" + currentX + ", " + (currentY - 1) + "]";
+            else if (direction.equals("West"))
+                newPosition = "[" + (currentX - 1) + ", " + currentY + "]";
+            if(Arrays.asList(ReservedLocations).contains(newPosition)) {
+                return "False";
+            }
+            return "True";
         }
     }
 }
