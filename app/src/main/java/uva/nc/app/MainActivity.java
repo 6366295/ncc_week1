@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -383,7 +384,10 @@ public class MainActivity extends ServiceActivity {
                     } else if (Input.contains("direction: ")) {
                         direction = Input.replace("direction: ", "");
                         toastShort("direction: " + direction);
+                        Log.e("Before Confirm", "direction: " + direction);
                         confirmation = Confirm(currentLocation, direction);
+                        //confirmation = "True";
+                        Log.e("After Confirm", "confirmation: " + confirmation);
                         final BluetoothService bluetooth = getBluetooth();
                         if (bluetooth != null) {
                             if (bluetooth.master.countConnected() > 0) {
@@ -445,8 +449,11 @@ public class MainActivity extends ServiceActivity {
              * Currently named: 'ReservedLocations' */
             // Initialize 'newPosition' based on parameters.
             String newPosition = "";
-            int currentX = Integer.valueOf(String.valueOf(currentLocation.charAt(1)));
-            int currentY = Integer.valueOf(String.valueOf(currentLocation.charAt(4)));
+            String test = currentLocation.replace("Locatie: ", "");
+            Log.e("Within Confirm", "currentLocation: " + test);
+            Log.e("Within Confirm", "direction: " + direction);
+            int currentX = Integer.valueOf(String.valueOf(test.charAt(1)));
+            int currentY = Integer.valueOf(String.valueOf(test.charAt(4)));
             if (direction.equals("North"))
                 newPosition = "[" + currentX + ", " + (currentY + 1) + "]";
             else if (direction.equals("East"))
@@ -455,6 +462,7 @@ public class MainActivity extends ServiceActivity {
                 newPosition = "[" + currentX + ", " + (currentY - 1) + "]";
             else if (direction.equals("West"))
                 newPosition = "[" + (currentX - 1) + ", " + currentY + "]";
+            Log.e("Within Confirm", "newPosition: " + newPosition);
             if(Arrays.asList(ReservedLocations).contains(newPosition)) {
                 return "False";
             }
