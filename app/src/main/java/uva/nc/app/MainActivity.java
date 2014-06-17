@@ -441,7 +441,7 @@ public class MainActivity extends ServiceActivity {
             }
         }
 
-        String[] ReservedLocations = {"[0, 1]", "[1, 0]", "[2, 1]"};
+        String[] ReservedLocations = {"[0, 1]", "[0, 2]", "[0, 3]", "[4, 1]", "[4, 2]", "[4, 3]", "[1, 0]", "[2, 0]", "[3, 0]", "[1, 4]", "[2, 4]", "[3, 4]"};
         //ReservedLocations[3] = "[1, 2]";
 
         public String Confirm(String currentLocation, String direction) {
